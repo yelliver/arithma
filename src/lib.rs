@@ -34,6 +34,9 @@ pub use crate::expression::{
     solve_for_variable, solve_for_variable_exact, solve_for_variable_nodes, solve_full, SolveResult,
 };
 
+mod latex;
+mod bridge;
+mod frb_generated;
 mod wasm_bindings;
 pub use crate::wasm_bindings::evaluate_latex_expression_js;
 
