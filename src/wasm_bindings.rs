@@ -19,15 +19,7 @@ use wasm_bindgen::prelude::*;
 #[allow(unexpected_cfgs)]
 #[wasm_bindgen]
 pub fn simplify_latex_js(latex_expr: &str) -> Result<String, JsValue> {
-    let mut tokenizer = Tokenizer::new(latex_expr);
-    let tokens = tokenizer.tokenize();
-    let expr = build_expression_tree(tokens)
-        .map_err(|e| JsValue::from_str(&format!("Error parsing LaTeX: {}", e)))?;
-    let env = crate::environment::Environment::new();
-    let simplified = expr
-        .simplify(&env)
-        .map_err(|e| JsValue::from_str(&format!("Error simplifying: {}", e)))?;
-    Ok(format!("{}", simplified))
+    crate::latex::simplify_latex(latex_expr).map_err(|e| JsValue::from_str(&e))
 }
 
 #[allow(unexpected_cfgs)]

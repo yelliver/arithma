@@ -19,6 +19,7 @@ clippy: ## Run linter
 
 wasm: ## Build WebAssembly module
 	RUSTFLAGS="--allow=unexpected_cfgs" wasm-pack build --target web --release
+	@mkdir -p frontend/public/pkg
 	@rm -f frontend/public/pkg/*
 	@cp pkg/* frontend/public/pkg/
 	@echo "Copied WASM to frontend/public/pkg/"

@@ -400,6 +400,8 @@ src/
   evaluator.rs         -- numerical evaluation
   verify.rs            -- numeric identity verification
   bin/arithma-mcp.rs   -- MCP server (JSON-RPC 2.0 over stdio)
+  latex.rs             -- shared LaTeX format/simplify/evaluate pipeline
+  wasm_bindings.rs     -- wasm-bindgen exports for the web frontend
 ```
 
 ~34K lines of Rust. Expressions are trees of `Node` variants. `ExactNum`
