@@ -95,6 +95,24 @@ mod round_trip_tests {
         env.set("x", 0.0);
         assert_round_trip_value("\\sin(x) + 1", 1.0, &env);
     }
+
+    #[test]
+    fn test_round_trip_factorial() {
+        let env = Environment::new();
+        assert_round_trip_value("\\factorial{5}", 120.0, &env);
+    }
+
+    #[test]
+    fn test_round_trip_factorial_postfix() {
+        let env = Environment::new();
+        assert_round_trip_value("5!", 120.0, &env);
+    }
+
+    #[test]
+    fn test_round_trip_binom() {
+        let env = Environment::new();
+        assert_round_trip_value("\\binom{5}{2}", 10.0, &env);
+    }
 }
 
 #[cfg(test)]
