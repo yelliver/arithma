@@ -218,20 +218,20 @@ pub fn build_expression_tree(tokens: Vec<String>) -> Result<Node, String> {
     Ok(stack.pop().unwrap())
 }
 
-/// Parse a LaTeX expression string into a Node AST
-pub fn parse_latex(latex: &str, env: &crate::environment::Environment) -> Result<Node, String> {
+/// Parse a LaTeX expression string into a Node AST (no simplification)
+pub fn parse_latex_raw(latex: &str) -> Result<Node, String> {
     let mut tokenizer = crate::tokenizer::Tokenizer::new(latex);
     let tokens = tokenizer.tokenize();
     if let Some(err) = tokenizer.errors.into_iter().next() {
         return Err(err);
     }
-    let expr = build_expression_tree(tokens)?;
+    build_expression_tree(tokens)
+}
 
-    // Simplify the expression using the environment
-    match expr.simplify(env) {
-        Ok(simplified) => Ok(simplified),
-        Err(_) => Ok(expr), // Fall back to the original expression if simplification fails
-    }
+/// Parse a LaTeX expression string into a Node AST and simplify using the environment
+pub fn parse_latex(latex: &str, env: &crate::environment::Environment) -> Result<Node, String> {
+    let expr = parse_latex_raw(latex)?;
+    Ok(expr.simplify(env).unwrap_or(expr))
 }
 
 /// Parse a summation expression like \sum_{i=1}^{n} i
@@ -489,5 +489,36 @@ fn parse_unbraced_summation_body(
                 // For higher powers or non-numeric exponents, leave as is
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod format_simplify_tests {
+    use super::{parse_latex, parse_latex_raw};
+    use crate::environment::Environment;
+
+    #[test]
+    fn format_implicit_mul() {
+        assert_eq!(format!("{}", parse_latex_raw("3x").unwrap()), "3x");
+    }
+
+    #[test]
+    fn format_does_not_simplify() {
+        assert_eq!(format!("{}", parse_latex_raw("1 + 1").unwrap()), "1 + 1");
+    }
+
+    #[test]
+    fn simplify_addition() {
+        let env = Environment::new();
+        assert_eq!(format!("{}", parse_latex("1 + 1", &env).unwrap()), "2");
+    }
+
+    #[test]
+    fn simplify_sqrt_12() {
+        let env = Environment::new();
+        assert_eq!(
+            format!("{}", parse_latex(r"\sqrt{12}", &env).unwrap()),
+            r"2\sqrt{3}"
+        );
     }
 }

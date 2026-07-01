@@ -26,7 +26,7 @@ pub mod tokenizer;
 pub use crate::tokenizer::Tokenizer;
 
 mod parser; // Add this to lib.rs
-pub use crate::parser::{build_expression_tree, parse_latex, shunting_yard};
+pub use crate::parser::{build_expression_tree, parse_latex_raw, parse_latex, shunting_yard};
 
 pub mod expression;
 pub use crate::expression::{
