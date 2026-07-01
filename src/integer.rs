@@ -175,8 +175,8 @@ pub fn prime_factorize_latex(n: u64) -> String {
 #[cfg(test)]
 mod tests {
     use super::{
-        gcd_u64, lcm_u64, factorial_exact, factorial_u64, binom_exact, binom_u64,
-        extract_square_factors, prime_factorize, prime_factorize_latex, MAX_FACTORIAL_U64,
+        binom_exact, binom_u64, extract_square_factors, factorial_exact, factorial_u64, gcd_u64,
+        lcm_u64, prime_factorize, prime_factorize_latex, MAX_FACTORIAL_U64,
     };
     use crate::ExactNum;
 

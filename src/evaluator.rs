@@ -1,7 +1,6 @@
 use crate::environment::Environment;
 use crate::exact::ExactNum;
 use crate::functions::call_function;
-use crate::integer::factorial_exact;
 use crate::node::Node;
 use crate::simplify::Simplifiable;
 
@@ -74,6 +73,22 @@ impl Evaluator {
             Node::Abs(operand) => {
                 let value = Self::evaluate_exact(operand, env)?;
                 Ok(value.abs())
+            }
+            Node::Floor(operand) => {
+                let value = Self::evaluate_exact(operand, env)?;
+                Ok(value.floor())
+            }
+            Node::Ceil(operand) => {
+                let value = Self::evaluate_exact(operand, env)?;
+                Ok(value.ceil())
+            }
+            Node::Round(operand) => {
+                let value = Self::evaluate_exact(operand, env)?;
+                Ok(value.round())
+            }
+            Node::Trunc(operand) => {
+                let value = Self::evaluate_exact(operand, env)?;
+                Ok(value.trunc())
             }
             Node::Greater(left, right) => {
                 let l = Self::evaluate_exact(left, env)?;

@@ -102,6 +102,36 @@ fn try_exact_function_value(name: &str, args: &[Node]) -> Option<Node> {
     let arg = &args[0];
 
     match name {
+        "abs" => {
+            if let Node::Num(n) = arg {
+                return Some(Node::Num(n.abs()));
+            }
+            None
+        }
+        "floor" => {
+            if let Node::Num(n) = arg {
+                return Some(Node::Num(n.floor()));
+            }
+            None
+        }
+        "ceil" => {
+            if let Node::Num(n) = arg {
+                return Some(Node::Num(n.ceil()));
+            }
+            None
+        }
+        "round" => {
+            if let Node::Num(n) = arg {
+                return Some(Node::Num(n.round()));
+            }
+            None
+        }
+        "trunc" => {
+            if let Node::Num(n) = arg {
+                return Some(Node::Num(n.trunc()));
+            }
+            None
+        }
         "ln" => {
             if let Node::Num(n) = arg {
                 if n.is_one() {
@@ -1123,6 +1153,34 @@ impl Simplifiable for Node {
                 }
                 Ok(Node::Abs(Box::new(simplified)))
             }
+            Node::Floor(operand) => {
+                let simplified = operand.simplify(env)?;
+                if let Node::Num(ref n) = simplified {
+                    return Ok(Node::Num(n.floor()));
+                }
+                Ok(Node::Floor(Box::new(simplified)))
+            }
+            Node::Ceil(operand) => {
+                let simplified = operand.simplify(env)?;
+                if let Node::Num(ref n) = simplified {
+                    return Ok(Node::Num(n.ceil()));
+                }
+                Ok(Node::Ceil(Box::new(simplified)))
+            }
+            Node::Round(operand) => {
+                let simplified = operand.simplify(env)?;
+                if let Node::Num(ref n) = simplified {
+                    return Ok(Node::Num(n.round()));
+                }
+                Ok(Node::Round(Box::new(simplified)))
+            }
+            Node::Trunc(operand) => {
+                let simplified = operand.simplify(env)?;
+                if let Node::Num(ref n) = simplified {
+                    return Ok(Node::Num(n.trunc()));
+                }
+                Ok(Node::Trunc(Box::new(simplified)))
+            }
             Node::Sqrt(operand) => {
                 let simplified = operand.simplify(env)?;
                 if let Node::Num(ref n) = simplified {
@@ -1206,6 +1264,26 @@ impl Simplifiable for Node {
                     .iter()
                     .map(|a| a.simplify(env))
                     .collect::<Result<Vec<_>, _>>()?;
+
+                if let Some(exact) = try_exact_function_value(name, &simplified_args) {
+                    return Ok(exact);
+                }
+
+                if name == "abs" && simplified_args.len() == 1 {
+                    return Ok(Node::Abs(Box::new(simplified_args[0].clone())));
+                }
+                if name == "floor" && simplified_args.len() == 1 {
+                    return Ok(Node::Floor(Box::new(simplified_args[0].clone())));
+                }
+                if name == "ceil" && simplified_args.len() == 1 {
+                    return Ok(Node::Ceil(Box::new(simplified_args[0].clone())));
+                }
+                if name == "round" && simplified_args.len() == 1 {
+                    return Ok(Node::Round(Box::new(simplified_args[0].clone())));
+                }
+                if name == "trunc" && simplified_args.len() == 1 {
+                    return Ok(Node::Trunc(Box::new(simplified_args[0].clone())));
+                }
 
                 if simplified_args.len() == 1 {
                     let arg = &simplified_args[0];
@@ -1365,10 +1443,6 @@ impl Simplifiable for Node {
                         }
                         _ => {}
                     }
-                }
-
-                if let Some(exact) = try_exact_function_value(name, &simplified_args) {
-                    return Ok(exact);
                 }
 
                 // Keep ln of positive integers symbolic (primes and already-factored bases).
